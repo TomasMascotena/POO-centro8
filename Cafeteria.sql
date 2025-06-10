@@ -1,43 +1,44 @@
--- Crear la base de datos
-CREATE DATABASE IF NOT EXISTS cafeteria;
-USE cafeteria;
+drop database if exists cafeteria;
+create database if not exists cafeteria;
+use cafeteria;
 
--- Tabla Persona (mozos/cajeros)
-CREATE TABLE Persona (
-    id_persona INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(50) NOT NULL,
-    apellido VARCHAR(50) NOT NULL,
-    rol ENUM('mozo', 'cajero') NOT NULL
+-- tabla persona (mozos/cajeros)
+create table persona (
+    id_persona int auto_increment primary key,
+    nombre varchar(50) not null,
+    apellido varchar(50) not null,
+    rol enum('mozo', 'cajero') not null
 );
 
--- Tabla Producto
-CREATE TABLE Producto (
-    id_producto INT AUTO_INCREMENT PRIMARY KEY,
-    nombre VARCHAR(100) NOT NULL,
-    precio DECIMAL(10, 2) NOT NULL,
-    categoria VARCHAR(50)
+-- tabla producto
+create table producto (
+    id_producto int auto_increment primary key,
+    nombre varchar(100) not null,
+    precio decimal(10, 2) not null,
+    categoria varchar(50)
 );
 
--- Tabla Pedido
-CREATE TABLE Pedido (
-    id_pedido INT AUTO_INCREMENT PRIMARY KEY,
-    tipo_pedido ENUM('en_mesa', 'para_llevar', 'delivery') NOT NULL,
-    estado ENUM('orden_tomada', 'en_proceso', 'entregado', 'pagado') NOT NULL,
-    monto_total DECIMAL(10, 2) NOT NULL,
-    fecha_hora_creacion DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    fecha_hora_entrega DATETIME NULL,
-    numero_mesa INT NULL,
-    id_responsable INT NOT NULL,
-    FOREIGN KEY (id_responsable) REFERENCES Persona(id_persona)
+-- tabla pedido
+create table pedido (
+    id_pedido int auto_increment primary key,
+    tipo_pedido enum('en_mesa', 'para_llevar', 'delivery') not null,
+    estado enum('en_proceso', 'entregado') not null,
+    esta_pagado boolean not null default false,
+    monto_total decimal(10, 2) not null,
+    fecha_hora_creacion datetime not null default current_timestamp,
+    fecha_hora_entrega datetime null,
+    numero_mesa int null,
+    id_responsable int not null,
+    foreign key (id_responsable) references persona(id_persona)
 );
 
--- Tabla DetallePedido (relación entre Pedido y Producto)
-CREATE TABLE DetallePedido (
-    id_pedido INT NOT NULL,
-    id_producto INT NOT NULL,
-    cantidad INT NOT NULL,
-    precio_unitario DECIMAL(10, 2) NOT NULL,
-    PRIMARY KEY (id_pedido, id_producto),
-    FOREIGN KEY (id_pedido) REFERENCES Pedido(id_pedido),
-    FOREIGN KEY (id_producto) REFERENCES Producto(id_producto)
+-- tabla detallepedido (relación entre pedido y producto)
+create table detallepedido (
+    id_pedido int not null,
+    id_producto int not null,
+    cantidad int not null,
+    precio_unitario decimal(10, 2) not null,
+    primary key (id_pedido, id_producto),
+    foreign key (id_pedido) references pedido(id_pedido),
+    foreign key (id_producto) references producto(id_producto)
 );
